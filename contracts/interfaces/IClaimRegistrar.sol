@@ -16,10 +16,16 @@ interface IClaimRegistrar {
 		string memory method
 	) external;
 
-	/// @dev Claim ownership of property with external storage.
+	/// @dev Claim ownership of property with external storage. If you want to remove, update with blank.
 	/// @param storageName name of storage
 	/// @param key key of claim in the storage
 	function claimWithExternal(string memory storageName, string memory key)
+		external;
+
+	/// @dev Remove a claim of ownership.
+	/// @param propertyType type of property
+	/// @param propertyId ID of property
+	function remove(string memory propertyType, string memory propertyId)
 		external;
 
 	/// @dev List keys of claim by an account

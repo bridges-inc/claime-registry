@@ -62,6 +62,31 @@ contract ClaimRegistrar is IClaimRegistrar {
 	}
 
 	/// @inheritdoc IClaimRegistrar
+	function remove(string memory propertyType, string memory propertyId)
+		public
+		override
+	{
+		require(!_isEmptyStr(propertyType), "CLM001");
+		require(!_isEmptyStr(propertyId), "CLM002");
+		uint256 claimKey = _toClaimKey(msg.sender, propertyType, propertyId);
+		uint256 keysLength = allClaimKeys[msg.sender].length;
+		uint256 index = keysLength;
+		for (uint256 i = 0; i < keysLength - 1; i++) {
+			if (allClaimKeys[msg.sender][i] == claimKey) {
+				index = i;
+				break;
+			}
+		}
+		if (index < keysLength) {
+			delete allClaims[claimKey];
+			allClaimKeys[msg.sender][index] = allClaimKeys[msg.sender][
+				keysLength - 1
+			];
+			allClaimKeys[msg.sender].pop();
+		}
+	}
+
+	/// @inheritdoc IClaimRegistrar
 	function listClaimKeys(address account)
 		public
 		view

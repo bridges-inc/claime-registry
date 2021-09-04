@@ -72,6 +72,21 @@ describe('ClaimRegistrar', async () => {
         anotherEvidence
       )
     })
+    it.skip('should new a claim to the same property by another account', async () => {
+      const { propertyType, propertyId, evidence, method } = domainClaim
+      await registrar.claim(propertyType, propertyId, evidence, method)
+
+      // how to switch user
+      const registrar2 = await getClaimRegistrarContract()
+      registrar2.connect(user2)
+      await registrar2.claim(propertyType, propertyId, evidence, method)
+
+      const [claimKeys1] = await registrar.listClaimKeys(connectedUser.address)
+      expect(claimKeys1).to.have.length(1)
+      const [claimKeys2] = await registrar.listClaimKeys(user2.address)
+      expect(claimKeys2).to.have.length(1)
+      expect(claimKeys1[0]).to.not.eq(claimKeys2[0])
+    })
     it('fail if property type is blank', async () => {
       const { propertyId, evidence, method } = domainClaim
       await expect(

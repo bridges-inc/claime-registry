@@ -56,9 +56,17 @@ contract ClaimRegistrar is IClaimRegistrar {
 		public
 		view
 		override
-		returns (uint256[] memory)
+		returns (
+			uint256[] memory,
+			string memory,
+			string memory
+		)
 	{
-		return allClaimKeys[account];
+		return (
+			allClaimKeys[account],
+			allClaimStorageReference[account].storageName,
+			allClaimStorageReference[account].key
+		);
 	}
 
 	function _equalsStr(string memory a, string memory b)

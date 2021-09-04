@@ -40,7 +40,7 @@ describe('ClaimRegistrar', async () => {
       const { propertyType, propertyId, evidence, method } = domainClaim
       await registrar.claim(propertyType, propertyId, evidence, method)
 
-      const claimKeys = await registrar.listClaimKeys(connectedUser.address)
+      const [claimKeys] = await registrar.listClaimKeys(connectedUser.address)
       expect(claimKeys).to.have.length(1)
       const res = await registrar.allClaims(claimKeys[0])
       expect(res).to.deep.equal([propertyType, propertyId, evidence, method])
@@ -51,7 +51,7 @@ describe('ClaimRegistrar', async () => {
       const anotherId = propertyId + '2'
       await registrar.claim(propertyType, anotherId, evidence, method)
 
-      const claimKeys = await registrar.listClaimKeys(connectedUser.address)
+      const [claimKeys] = await registrar.listClaimKeys(connectedUser.address)
       expect(claimKeys).to.have.length(2)
       expect((await registrar.allClaims(claimKeys[0]))[1]).to.deep.equal(
         propertyId
@@ -66,7 +66,7 @@ describe('ClaimRegistrar', async () => {
       const anotherEvidence = evidence + '2'
       await registrar.claim(propertyType, propertyId, anotherEvidence, method)
 
-      const claimKeys = await registrar.listClaimKeys(connectedUser.address)
+      const [claimKeys] = await registrar.listClaimKeys(connectedUser.address)
       expect(claimKeys).to.have.length(1)
       expect((await registrar.allClaims(claimKeys[0]))[2]).to.deep.equal(
         anotherEvidence

@@ -18,8 +18,13 @@ interface IClaimRegistrar {
 
 	/// @dev List keys of claim by an account
 	/// @param account account of claimer
+	/// @return [[claimKeys], storageName, key]
 	function listClaimKeys(address account)
 		external
 		view
-		returns (uint256[] memory);
+		returns (
+			uint256[] memory,
+			string memory,
+			string memory
+		);
 }

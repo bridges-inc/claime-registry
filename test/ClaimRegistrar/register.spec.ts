@@ -20,7 +20,7 @@ describe('ClaimRegistrar', async () => {
     }
   })
 
-  describe('claim', async () => {
+  describe('register', async () => {
     const domainClaim = {
       propertyType: 'Domain',
       propertyId: 'example.com',
@@ -38,7 +38,7 @@ describe('ClaimRegistrar', async () => {
 
     it('should new a claim', async () => {
       const { propertyType, propertyId, evidence, method } = domainClaim
-      await registrar.claim(propertyType, propertyId, evidence, method)
+      await registrar.register(propertyType, propertyId, evidence, method)
 
       const [claimKeys] = await registrar.listClaimKeys(connectedUser.address)
       expect(claimKeys).to.have.length(1)
@@ -47,9 +47,9 @@ describe('ClaimRegistrar', async () => {
     })
     it('should add a claim', async () => {
       const { propertyType, propertyId, evidence, method } = domainClaim
-      await registrar.claim(propertyType, propertyId, evidence, method)
+      await registrar.register(propertyType, propertyId, evidence, method)
       const anotherId = propertyId + '2'
-      await registrar.claim(propertyType, anotherId, evidence, method)
+      await registrar.register(propertyType, anotherId, evidence, method)
 
       const [claimKeys] = await registrar.listClaimKeys(connectedUser.address)
       expect(claimKeys).to.have.length(2)
@@ -62,9 +62,14 @@ describe('ClaimRegistrar', async () => {
     })
     it('should update a claim if the same key', async () => {
       const { propertyType, propertyId, evidence, method } = domainClaim
-      await registrar.claim(propertyType, propertyId, evidence, method)
+      await registrar.register(propertyType, propertyId, evidence, method)
       const anotherEvidence = evidence + '2'
-      await registrar.claim(propertyType, propertyId, anotherEvidence, method)
+      await registrar.register(
+        propertyType,
+        propertyId,
+        anotherEvidence,
+        method
+      )
 
       const [claimKeys] = await registrar.listClaimKeys(connectedUser.address)
       expect(claimKeys).to.have.length(1)
@@ -72,14 +77,12 @@ describe('ClaimRegistrar', async () => {
         anotherEvidence
       )
     })
-    it.skip('should new a claim to the same property by another account', async () => {
+    it('should new a claim to the same property by another account', async () => {
       const { propertyType, propertyId, evidence, method } = domainClaim
-      await registrar.claim(propertyType, propertyId, evidence, method)
+      await registrar.register(propertyType, propertyId, evidence, method)
 
-      // how to switch user
-      const registrar2 = await getClaimRegistrarContract()
-      registrar2.connect(user2)
-      await registrar2.claim(propertyType, propertyId, evidence, method)
+      const registrar2 = registrar.connect(user2)
+      await registrar2.register(propertyType, propertyId, evidence, method)
 
       const [claimKeys1] = await registrar.listClaimKeys(connectedUser.address)
       expect(claimKeys1).to.have.length(1)
@@ -90,13 +93,13 @@ describe('ClaimRegistrar', async () => {
     it('fail if property type is blank', async () => {
       const { propertyId, evidence, method } = domainClaim
       await expect(
-        registrar.claim('', propertyId, evidence, method)
+        registrar.register('', propertyId, evidence, method)
       ).to.be.revertedWith('CLM001')
     })
     it('fail if property id is blank', async () => {
       const { propertyType, evidence, method } = domainClaim
       await expect(
-        registrar.claim(propertyType, '', evidence, method)
+        registrar.register(propertyType, '', evidence, method)
       ).to.be.revertedWith('CLM002')
     })
   })

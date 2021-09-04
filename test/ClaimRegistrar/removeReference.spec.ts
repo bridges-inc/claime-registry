@@ -20,12 +20,10 @@ describe('ClaimRegistrar', async () => {
     }
   })
 
-  describe('remove', async () => {
-    const domainClaim = {
-      propertyType: 'Domain',
-      propertyId: 'example.com',
-      evidence: 'example.com',
-      method: 'TXT',
+  describe('claimWithExternal', async () => {
+    const externalReference = {
+      storageName: 'arweave',
+      key: 'metadatakey',
     }
 
     let registrar: Contract
@@ -36,18 +34,22 @@ describe('ClaimRegistrar', async () => {
       await setNextBlock()
     })
 
-    it('should remove a claim', async () => {
-      const { propertyType, propertyId, evidence, method } = domainClaim
-      await registrar.register(propertyType, propertyId, evidence, method)
-      const anotherId = propertyId + '2'
-      await registrar.register(propertyType, anotherId, evidence, method)
+    it('should remove external reference updating with blank', async () => {
+      const { storageName, key } = externalReference
+      await registrar.registerReference(storageName, key)
 
-      const [claimKeys] = await registrar.listClaimKeys(connectedUser.address)
-      expect(claimKeys).to.have.length(2)
-      await registrar.remove(propertyType, propertyId)
-      const [keyRemoved] = await registrar.listClaimKeys(connectedUser.address)
-      expect(keyRemoved).to.have.length(1)
-      expect((await registrar.allClaims(keyRemoved[0]))[1]).to.be.eq(anotherId)
+      const [_, storedName, storedKey] = await registrar.listClaimKeys(
+        connectedUser.address
+      )
+      expect(storedName).to.be.eq(storageName)
+      expect(storedKey).to.be.eq(key)
+
+      await registrar.removeReference()
+      const [__, nameRemoved, keyRemoved] = await registrar.listClaimKeys(
+        connectedUser.address
+      )
+      expect(nameRemoved).to.be.eq('')
+      expect(keyRemoved).to.be.eq('')
     })
   })
 })

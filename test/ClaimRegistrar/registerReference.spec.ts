@@ -20,8 +20,8 @@ describe('ClaimRegistrar', async () => {
     }
   })
 
-  describe('claimWithExternal', async () => {
-    const externalReference = {
+  describe('registerReference', async () => {
+    const reference = {
       storageName: 'arweave',
       key: 'metadatakey',
     }
@@ -35,8 +35,8 @@ describe('ClaimRegistrar', async () => {
     })
 
     it('should new a external reference', async () => {
-      const { storageName, key } = externalReference
-      await registrar.claimWithExternal(storageName, key)
+      const { storageName, key } = reference
+      await registrar.registerReference(storageName, key)
 
       const [_, storedName, storedKey] = await registrar.listClaimKeys(
         connectedUser.address
@@ -45,9 +45,9 @@ describe('ClaimRegistrar', async () => {
       expect(storedKey).to.be.eq(key)
     })
     it('should update a external reference', async () => {
-      const { storageName, key } = externalReference
+      const { storageName, key } = reference
       const key2 = key + '2'
-      await registrar.claimWithExternal(storageName, key2)
+      await registrar.registerReference(storageName, key2)
 
       const [_, storedName, storedKey] = await registrar.listClaimKeys(
         connectedUser.address
@@ -55,8 +55,25 @@ describe('ClaimRegistrar', async () => {
       expect(storedName).to.be.eq(storageName)
       expect(storedKey).to.be.eq(key2)
     })
+    it('should new a external reference by another account', async () => {
+      const { storageName, key } = reference
+      await registrar.registerReference(storageName, key)
+      const registrar2 = registrar.connect(user2)
+      await registrar2.registerReference(storageName, key)
+
+      const [_, storedName, storedKey] = await registrar.listClaimKeys(
+        connectedUser.address
+      )
+      const [__, storedName2, storedKey2] = await registrar.listClaimKeys(
+        user2.address
+      )
+      expect(storedName).to.be.eq(storageName)
+      expect(storedKey).to.be.eq(key)
+      expect(storedName2).to.be.eq(storageName)
+      expect(storedKey2).to.be.eq(key)
+    })
     it('should remove external reference updating with blank', async () => {
-      await registrar.claimWithExternal('', '')
+      await registrar.registerReference('', '')
 
       const [_, storedName, storedKey] = await registrar.listClaimKeys(
         connectedUser.address

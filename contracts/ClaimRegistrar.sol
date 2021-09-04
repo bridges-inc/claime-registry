@@ -33,7 +33,7 @@ contract ClaimRegistrar is IClaimRegistrar {
 	mapping(address => ClaimStorageReference) public allClaimStorageReference;
 
 	/// @inheritdoc IClaimRegistrar
-	function claim(
+	function register(
 		string memory propertyType,
 		string memory propertyId,
 		string memory evidence,
@@ -53,7 +53,7 @@ contract ClaimRegistrar is IClaimRegistrar {
 	}
 
 	/// @inheritdoc IClaimRegistrar
-	function claimWithExternal(string memory storageName, string memory key)
+	function registerReference(string memory storageName, string memory key)
 		public
 		override
 	{
@@ -84,6 +84,11 @@ contract ClaimRegistrar is IClaimRegistrar {
 			];
 			allClaimKeys[msg.sender].pop();
 		}
+	}
+
+	/// @inheritdoc IClaimRegistrar
+	function removeReference() public override {
+		registerReference("", "");
 	}
 
 	/// @inheritdoc IClaimRegistrar

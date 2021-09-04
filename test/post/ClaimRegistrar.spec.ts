@@ -37,5 +37,23 @@ describe('ClaimRegistrar', async () => {
       const res = await registrar.allClaims(claimKeys[0])
       expect(res).to.deep.equal([propertyType, propertyId, evidence, method])
     })
+    it('fail if property type is blank', async () => {
+      const { registrar } = await setupTests()
+      registrar.connect(user1)
+      await setNextBlock()
+      const { propertyId, evidence, method } = domainClaim
+      await expect(
+        registrar.claim('', propertyId, evidence, method)
+      ).to.be.revertedWith('CLM001')
+    })
+    it('fail if property id is blank', async () => {
+      const { registrar } = await setupTests()
+      registrar.connect(user1)
+      await setNextBlock()
+      const { propertyType, evidence, method } = domainClaim
+      await expect(
+        registrar.claim(propertyType, '', evidence, method)
+      ).to.be.revertedWith('CLM002')
+    })
   })
 })

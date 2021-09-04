@@ -39,6 +39,8 @@ contract ClaimRegistrar is IClaimRegistrar {
 		string memory evidence,
 		string memory method
 	) public override {
+		require(!_isEmptyStr(propertyType), "CLM001");
+		require(!_isEmptyStr(propertyId), "CLM002");
 		uint256 claimKey = _toClaimKey(msg.sender, propertyType, propertyId);
 		bool isNew = _isEmptyStr(allClaims[claimKey].propertyType);
 		allClaims[claimKey].propertyType = propertyType;

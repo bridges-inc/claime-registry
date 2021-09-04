@@ -52,6 +52,16 @@ contract ClaimRegistrar is IClaimRegistrar {
 		}
 	}
 
+	/// @inheritdoc IClaimRegistrar
+	function claimWithExternal(string memory storageName, string memory key)
+		public
+		override
+	{
+		allClaimStorageReference[msg.sender].storageName = storageName;
+		allClaimStorageReference[msg.sender].key = key;
+	}
+
+	/// @inheritdoc IClaimRegistrar
 	function listClaimKeys(address account)
 		public
 		view

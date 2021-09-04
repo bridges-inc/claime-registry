@@ -16,6 +16,12 @@ interface IClaimRegistrar {
 		string memory method
 	) external;
 
+	/// @dev Claim ownership of property with external storage.
+	/// @param storageName name of storage
+	/// @param key key of claime in the storage
+	function claimWithExternal(string memory storageName, string memory key)
+		external;
+
 	/// @dev List keys of claim by an account
 	/// @param account account of claimer
 	/// @return [[claimKeys], storageName, key]

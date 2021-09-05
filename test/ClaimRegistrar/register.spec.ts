@@ -40,7 +40,7 @@ describe('ClaimRegistrar', async () => {
       const { propertyType, propertyId, evidence, method } = domainClaim
       await registrar.register(propertyType, propertyId, evidence, method)
 
-      const [claimKeys] = await registrar.listClaimKeys(connectedUser.address)
+      const [claimKeys] = await registrar.listClaims(connectedUser.address)
       expect(claimKeys).to.have.length(1)
       const res = await registrar.allClaims(claimKeys[0])
       expect(res).to.deep.equal([propertyType, propertyId, evidence, method])
@@ -51,7 +51,7 @@ describe('ClaimRegistrar', async () => {
       const anotherId = propertyId + '2'
       await registrar.register(propertyType, anotherId, evidence, method)
 
-      const [claimKeys] = await registrar.listClaimKeys(connectedUser.address)
+      const [claimKeys] = await registrar.listClaims(connectedUser.address)
       expect(claimKeys).to.have.length(2)
       expect((await registrar.allClaims(claimKeys[0]))[1]).to.deep.equal(
         propertyId
@@ -71,7 +71,7 @@ describe('ClaimRegistrar', async () => {
         method
       )
 
-      const [claimKeys] = await registrar.listClaimKeys(connectedUser.address)
+      const [claimKeys] = await registrar.listClaims(connectedUser.address)
       expect(claimKeys).to.have.length(1)
       expect((await registrar.allClaims(claimKeys[0]))[2]).to.deep.equal(
         anotherEvidence
@@ -84,9 +84,9 @@ describe('ClaimRegistrar', async () => {
       const registrar2 = registrar.connect(user2)
       await registrar2.register(propertyType, propertyId, evidence, method)
 
-      const [claimKeys1] = await registrar.listClaimKeys(connectedUser.address)
+      const [claimKeys1] = await registrar.listClaims(connectedUser.address)
       expect(claimKeys1).to.have.length(1)
-      const [claimKeys2] = await registrar.listClaimKeys(user2.address)
+      const [claimKeys2] = await registrar.listClaims(user2.address)
       expect(claimKeys2).to.have.length(1)
       expect(claimKeys1[0]).to.not.eq(claimKeys2[0])
     })

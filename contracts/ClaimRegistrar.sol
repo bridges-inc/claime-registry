@@ -17,9 +17,9 @@ contract ClaimRegistrar is IClaimRegistrar {
 		string method;
 	}
 
-	/// @dev Reference of external storage
-	struct ClaimStorageReference {
-		string storageName;
+	/// @dev Reference to external
+	struct ClaimRef {
+		string ref;
 		string key;
 	}
 
@@ -30,7 +30,7 @@ contract ClaimRegistrar is IClaimRegistrar {
 	mapping(uint256 => Claim) public allClaims;
 
 	/// @dev Maps address with the claim registry.
-	mapping(address => ClaimStorageReference) public allClaimStorageReference;
+	mapping(address => ClaimRef) public allClaimRefs;
 
 	/// @inheritdoc IClaimRegistrar
 	function register(
@@ -53,12 +53,9 @@ contract ClaimRegistrar is IClaimRegistrar {
 	}
 
 	/// @inheritdoc IClaimRegistrar
-	function registerReference(string memory storageName, string memory key)
-		public
-		override
-	{
-		allClaimStorageReference[msg.sender].storageName = storageName;
-		allClaimStorageReference[msg.sender].key = key;
+	function registerRef(string memory ref, string memory key) public override {
+		allClaimRefs[msg.sender].ref = ref;
+		allClaimRefs[msg.sender].key = key;
 	}
 
 	/// @inheritdoc IClaimRegistrar
@@ -87,25 +84,20 @@ contract ClaimRegistrar is IClaimRegistrar {
 	}
 
 	/// @inheritdoc IClaimRegistrar
-	function removeReference() public override {
-		registerReference("", "");
+	function removeRef() public override {
+		registerRef("", "");
 	}
 
 	/// @inheritdoc IClaimRegistrar
-	function listClaimKeys(address account)
+	function listClaims(address account)
 		public
 		view
 		override
-		returns (
-			uint256[] memory,
-			string memory,
-			string memory
-		)
+		returns (uint256[] memory, string[2] memory)
 	{
 		return (
 			allClaimKeys[account],
-			allClaimStorageReference[account].storageName,
-			allClaimStorageReference[account].key
+			[allClaimRefs[account].ref, allClaimRefs[account].key]
 		);
 	}
 

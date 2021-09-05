@@ -1,1 +1,1 @@
-# claime-registrar
+# claime-registry

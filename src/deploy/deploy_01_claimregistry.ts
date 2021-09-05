@@ -5,7 +5,7 @@ const deploy: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { deployments, getNamedAccounts } = hre
   const { deployer } = await getNamedAccounts()
   const { deploy } = deployments
-  await deploy('ClaimRegistrar', {
+  await deploy('ClaimRegistry', {
     from: deployer,
     args: [],
     log: true,

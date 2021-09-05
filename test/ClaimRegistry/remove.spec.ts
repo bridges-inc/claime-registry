@@ -1,7 +1,7 @@
 import { Contract } from '@ethersproject/contracts'
 import { expect } from 'chai'
 import { deployments, network, waffle } from 'hardhat'
-import { getClaimRegistrarContract } from '../utils/setup'
+import { getClaimRegistryContract } from '../utils/setup'
 
 const setNextBlock = async () => {
   const now = Date.now()
@@ -10,13 +10,13 @@ const setNextBlock = async () => {
   return now
 }
 
-describe('ClaimRegistrar', async () => {
+describe('ClaimRegistry', async () => {
   const [connectedUser, user2] = waffle.provider.getWallets()
 
   const setupTests = deployments.createFixture(async ({ deployments }) => {
     await deployments.fixture()
     return {
-      registrar: await getClaimRegistrarContract(),
+      registry: await getClaimRegistryContract(),
     }
   })
 
@@ -28,26 +28,26 @@ describe('ClaimRegistrar', async () => {
       method: 'TXT',
     }
 
-    let registrar: Contract
+    let registry: Contract
     beforeEach(async () => {
       const contracts = await setupTests()
-      registrar = contracts.registrar
-      registrar.connect(connectedUser)
+      registry = contracts.registry
+      registry.connect(connectedUser)
       await setNextBlock()
     })
 
     it('should remove a claim', async () => {
       const { propertyType, propertyId, evidence, method } = domainClaim
-      await registrar.register(propertyType, propertyId, evidence, method)
+      await registry.register(propertyType, propertyId, evidence, method)
       const anotherId = propertyId + '2'
-      await registrar.register(propertyType, anotherId, evidence, method)
+      await registry.register(propertyType, anotherId, evidence, method)
 
-      const [claimKeys] = await registrar.listClaims(connectedUser.address)
+      const [claimKeys] = await registry.listClaims(connectedUser.address)
       expect(claimKeys).to.have.length(2)
-      await registrar.remove(propertyType, propertyId)
-      const [keyRemoved] = await registrar.listClaims(connectedUser.address)
+      await registry.remove(propertyType, propertyId)
+      const [keyRemoved] = await registry.listClaims(connectedUser.address)
       expect(keyRemoved).to.have.length(1)
-      expect((await registrar.allClaims(keyRemoved[0]))[1]).to.be.eq(anotherId)
+      expect((await registry.allClaims(keyRemoved[0]))[1]).to.be.eq(anotherId)
     })
   })
 })

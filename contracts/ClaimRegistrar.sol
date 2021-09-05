@@ -17,7 +17,7 @@ contract ClaimRegistrar is IClaimRegistrar {
 		string method;
 	}
 
-	/// @dev Reference of external storage
+	/// @dev Reference to external
 	struct ClaimRef {
 		string ref;
 		string key;

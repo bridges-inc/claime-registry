@@ -22,7 +22,7 @@ describe('ClaimRegistrar', async () => {
 
   describe('registerReference', async () => {
     const reference = {
-      storageName: 'arweave',
+      ref: 'arweave',
       key: 'metadatakey',
     }
 
@@ -35,50 +35,50 @@ describe('ClaimRegistrar', async () => {
     })
 
     it('should new a external reference', async () => {
-      const { storageName, key } = reference
-      await registrar.registerRef(storageName, key)
+      const { ref, key } = reference
+      await registrar.registerRef(ref, key)
 
-      const [_, [storedName, storedKey]] = await registrar.listClaims(
+      const [_, [storedRef, storedKey]] = await registrar.listClaims(
         connectedUser.address
       )
-      expect(storedName).to.be.eq(storageName)
+      expect(storedRef).to.be.eq(ref)
       expect(storedKey).to.be.eq(key)
     })
     it('should update a external reference', async () => {
-      const { storageName, key } = reference
+      const { ref, key } = reference
       const key2 = key + '2'
-      await registrar.registerRef(storageName, key2)
+      await registrar.registerRef(ref, key2)
 
-      const [_, [storedName, storedKey]] = await registrar.listClaims(
+      const [_, [storedRef, storedKey]] = await registrar.listClaims(
         connectedUser.address
       )
-      expect(storedName).to.be.eq(storageName)
+      expect(storedRef).to.be.eq(ref)
       expect(storedKey).to.be.eq(key2)
     })
     it('should new a external reference by another account', async () => {
-      const { storageName, key } = reference
-      await registrar.registerRef(storageName, key)
+      const { ref, key } = reference
+      await registrar.registerRef(ref, key)
       const registrar2 = registrar.connect(user2)
-      await registrar2.registerRef(storageName, key)
+      await registrar2.registerRef(ref, key)
 
-      const [_, [storedName, storedKey]] = await registrar.listClaims(
+      const [_, [storedRef, storedKey]] = await registrar.listClaims(
         connectedUser.address
       )
-      const [__, [storedName2, storedKey2]] = await registrar.listClaims(
+      const [__, [storedRef2, storedKey2]] = await registrar.listClaims(
         user2.address
       )
-      expect(storedName).to.be.eq(storageName)
+      expect(storedRef).to.be.eq(ref)
       expect(storedKey).to.be.eq(key)
-      expect(storedName2).to.be.eq(storageName)
+      expect(storedRef2).to.be.eq(ref)
       expect(storedKey2).to.be.eq(key)
     })
     it('should remove external reference updating with blank', async () => {
       await registrar.registerRef('', '')
 
-      const [_, [storedName, storedKey]] = await registrar.listClaims(
+      const [_, [storedRef, storedKey]] = await registrar.listClaims(
         connectedUser.address
       )
-      expect(storedName).to.be.eq('')
+      expect(storedRef).to.be.eq('')
       expect(storedKey).to.be.eq('')
     })
   })

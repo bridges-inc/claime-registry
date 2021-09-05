@@ -17,9 +17,9 @@ interface IClaimRegistrar {
 	) external;
 
 	/// @dev Register a reference of claims of ownership of property.
-	/// @param storageName name of a storage
-	/// @param key key of a claim in the storage
-	function registerRef(string memory storageName, string memory key) external;
+	/// @param ref type of reference
+	/// @param key key of a claim in the reference
+	function registerRef(string memory ref, string memory key) external;
 
 	/// @dev Remove a claim of ownership.
 	/// @param propertyType type of property
@@ -32,7 +32,7 @@ interface IClaimRegistrar {
 
 	/// @dev List keys of claim and a reference by an account
 	/// @param account account of claimer
-	/// @return [[claimKeys], [storageName, key]]
+	/// @return [[claimKeys], [ref, key]]
 	function listClaims(address account)
 		external
 		view

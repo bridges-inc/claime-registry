@@ -22,7 +22,7 @@ describe('ClaimRegistrar', async () => {
 
   describe('claimWithExternal', async () => {
     const externalReference = {
-      storageName: 'arweave',
+      ref: 'arweave',
       key: 'metadatakey',
     }
 
@@ -35,20 +35,20 @@ describe('ClaimRegistrar', async () => {
     })
 
     it('should remove external reference updating with blank', async () => {
-      const { storageName, key } = externalReference
-      await registrar.registerRef(storageName, key)
+      const { ref, key } = externalReference
+      await registrar.registerRef(ref, key)
 
-      const [_, [storedName, storedKey]] = await registrar.listClaims(
+      const [_, [storedRef, storedKey]] = await registrar.listClaims(
         connectedUser.address
       )
-      expect(storedName).to.be.eq(storageName)
+      expect(storedRef).to.be.eq(ref)
       expect(storedKey).to.be.eq(key)
 
       await registrar.removeRef()
-      const [__, [nameRemoved, keyRemoved]] = await registrar.listClaims(
+      const [__, [refRemoved, keyRemoved]] = await registrar.listClaims(
         connectedUser.address
       )
-      expect(nameRemoved).to.be.eq('')
+      expect(refRemoved).to.be.eq('')
       expect(keyRemoved).to.be.eq('')
     })
   })

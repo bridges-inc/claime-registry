@@ -36,16 +36,16 @@ describe('ClaimRegistrar', async () => {
 
     it('should remove external reference updating with blank', async () => {
       const { storageName, key } = externalReference
-      await registrar.registerReference(storageName, key)
+      await registrar.registerRef(storageName, key)
 
-      const [_, storedName, storedKey] = await registrar.listClaimKeys(
+      const [_, [storedName, storedKey]] = await registrar.listClaims(
         connectedUser.address
       )
       expect(storedName).to.be.eq(storageName)
       expect(storedKey).to.be.eq(key)
 
-      await registrar.removeReference()
-      const [__, nameRemoved, keyRemoved] = await registrar.listClaimKeys(
+      await registrar.removeRef()
+      const [__, [nameRemoved, keyRemoved]] = await registrar.listClaims(
         connectedUser.address
       )
       expect(nameRemoved).to.be.eq('')

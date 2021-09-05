@@ -42,10 +42,10 @@ describe('ClaimRegistrar', async () => {
       const anotherId = propertyId + '2'
       await registrar.register(propertyType, anotherId, evidence, method)
 
-      const [claimKeys] = await registrar.listClaimKeys(connectedUser.address)
+      const [claimKeys] = await registrar.listClaims(connectedUser.address)
       expect(claimKeys).to.have.length(2)
       await registrar.remove(propertyType, propertyId)
-      const [keyRemoved] = await registrar.listClaimKeys(connectedUser.address)
+      const [keyRemoved] = await registrar.listClaims(connectedUser.address)
       expect(keyRemoved).to.have.length(1)
       expect((await registrar.allClaims(keyRemoved[0]))[1]).to.be.eq(anotherId)
     })

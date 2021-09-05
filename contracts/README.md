@@ -1,4 +1,4 @@
-# ClaimRegistrar Error Code
+# ClaimRegistry Error Code
 
 ## CLM001
 

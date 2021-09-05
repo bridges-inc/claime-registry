@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.6;
 
-import "./interfaces/IClaimRegistrar.sol";
+import "./interfaces/IClaimRegistry.sol";
 import "hardhat/console.sol";
 
 /// @title Claimer - manages the posted items and donation flows.
 /// @author Shoya Yanagisawa - <shoya.yanagisawa@bridges.inc>
-contract ClaimRegistrar is IClaimRegistrar {
+contract ClaimRegistry is IClaimRegistry {
 	/** Structs */
 
 	/// @dev Claim of Ownership
@@ -32,7 +32,7 @@ contract ClaimRegistrar is IClaimRegistrar {
 	/// @dev Maps address with the claim registry.
 	mapping(address => ClaimRef) public allClaimRefs;
 
-	/// @inheritdoc IClaimRegistrar
+	/// @inheritdoc IClaimRegistry
 	function register(
 		string memory propertyType,
 		string memory propertyId,
@@ -52,13 +52,13 @@ contract ClaimRegistrar is IClaimRegistrar {
 		}
 	}
 
-	/// @inheritdoc IClaimRegistrar
+	/// @inheritdoc IClaimRegistry
 	function registerRef(string memory ref, string memory key) public override {
 		allClaimRefs[msg.sender].ref = ref;
 		allClaimRefs[msg.sender].key = key;
 	}
 
-	/// @inheritdoc IClaimRegistrar
+	/// @inheritdoc IClaimRegistry
 	function remove(string memory propertyType, string memory propertyId)
 		public
 		override
@@ -83,12 +83,12 @@ contract ClaimRegistrar is IClaimRegistrar {
 		}
 	}
 
-	/// @inheritdoc IClaimRegistrar
+	/// @inheritdoc IClaimRegistry
 	function removeRef() public override {
 		registerRef("", "");
 	}
 
-	/// @inheritdoc IClaimRegistrar
+	/// @inheritdoc IClaimRegistry
 	function listClaims(address account)
 		public
 		view

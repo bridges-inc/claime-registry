@@ -68,7 +68,7 @@ contract ClaimRegistry is IClaimRegistry {
 		uint256 claimKey = _toClaimKey(msg.sender, propertyType, propertyId);
 		uint256 keysLength = allClaimKeys[msg.sender].length;
 		uint256 index = keysLength;
-		for (uint256 i = 0; i < keysLength - 1; i++) {
+		for (uint256 i = 0; i < keysLength; i++) {
 			if (allClaimKeys[msg.sender][i] == claimKey) {
 				index = i;
 				break;

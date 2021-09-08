@@ -36,7 +36,9 @@ describe('ClaimRegistry', async () => {
 
     it('should new a external reference', async () => {
       const { ref, key } = reference
-      await registry.registerRef(ref, key)
+      await expect(registry.registerRef(ref, key))
+        .to.emit(registry, 'ClaimRefUpdated')
+        .withArgs(connectedUser.address, [ref, key])
 
       const [_, [storedRef, storedKey]] = await registry.listClaims(
         connectedUser.address

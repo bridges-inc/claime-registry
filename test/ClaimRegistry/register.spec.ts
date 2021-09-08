@@ -38,7 +38,16 @@ describe('ClaimRegistry', async () => {
 
     it('should new a claim', async () => {
       const { propertyType, propertyId, evidence, method } = domainClaim
-      await registry.register(propertyType, propertyId, evidence, method)
+      await expect(
+        registry.register(propertyType, propertyId, evidence, method)
+      )
+        .to.emit(registry, 'ClaimUpdated')
+        .withArgs(connectedUser.address, [
+          propertyType,
+          propertyId,
+          evidence,
+          method,
+        ])
 
       const [claimKeys] = await registry.listClaims(connectedUser.address)
       expect(claimKeys).to.have.length(1)
@@ -64,12 +73,7 @@ describe('ClaimRegistry', async () => {
       const { propertyType, propertyId, evidence, method } = domainClaim
       await registry.register(propertyType, propertyId, evidence, method)
       const anotherEvidence = evidence + '2'
-      await registry.register(
-        propertyType,
-        propertyId,
-        anotherEvidence,
-        method
-      )
+      await registry.register(propertyType, propertyId, anotherEvidence, method)
 
       const [claimKeys] = await registry.listClaims(connectedUser.address)
       expect(claimKeys).to.have.length(1)

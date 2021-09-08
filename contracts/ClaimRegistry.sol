@@ -7,22 +7,6 @@ import "hardhat/console.sol";
 /// @title Claimer - manages the posted items and donation flows.
 /// @author Shoya Yanagisawa - <shoya.yanagisawa@bridges.inc>
 contract ClaimRegistry is IClaimRegistry {
-	/** Structs */
-
-	/// @dev Claim of Ownership
-	struct Claim {
-		string propertyType;
-		string propertyId;
-		string evidence;
-		string method;
-	}
-
-	/// @dev Reference to external
-	struct ClaimRef {
-		string ref;
-		string key;
-	}
-
 	/// @dev Maps address with the claimKeys.
 	mapping(address => uint256[]) public allClaimKeys;
 
@@ -50,12 +34,18 @@ contract ClaimRegistry is IClaimRegistry {
 		if (isNew) {
 			allClaimKeys[msg.sender].push(claimKey);
 		}
+		emit ClaimUpdated(msg.sender, allClaims[claimKey]);
 	}
 
 	/// @inheritdoc IClaimRegistry
 	function registerRef(string memory ref, string memory key) public override {
 		allClaimRefs[msg.sender].ref = ref;
 		allClaimRefs[msg.sender].key = key;
+		if (_isEmptyStr(ref) && _isEmptyStr(key)) {
+			emit ClaimRefRemoved(msg.sender);
+		} else {
+			emit ClaimRefUpdated(msg.sender, allClaimRefs[msg.sender]);
+		}
 	}
 
 	/// @inheritdoc IClaimRegistry
@@ -80,6 +70,7 @@ contract ClaimRegistry is IClaimRegistry {
 				keysLength - 1
 			];
 			allClaimKeys[msg.sender].pop();
+			emit ClaimRemoved(msg.sender, propertyType, propertyId);
 		}
 	}
 

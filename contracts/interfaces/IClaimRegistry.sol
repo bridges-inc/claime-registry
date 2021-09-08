@@ -4,6 +4,31 @@ pragma solidity 0.8.6;
 /// @title IClaimRegistry - register ownership claims.
 /// @author Shoya Yanagisawa - <shoya.yanagisawa@bridges.inc>
 interface IClaimRegistry {
+	/// @dev Claim of Ownership
+	struct Claim {
+		string propertyType;
+		string propertyId;
+		string evidence;
+		string method;
+	}
+
+	/// @dev Reference to external
+	struct ClaimRef {
+		string ref;
+		string key;
+	}
+	/// @dev Emit on a claim created/updated
+	event ClaimUpdated(address claimer, Claim claim);
+
+	/// @dev Emit on a claim removed
+	event ClaimRemoved(address claimer, string propertyType, string propertyId);
+
+	/// @dev Emit on a claim ref created/updated
+	event ClaimRefUpdated(address claimer, ClaimRef ref);
+
+	/// @dev Emit on a claim ref removed
+	event ClaimRefRemoved(address claimer);
+
 	/// @dev Register a claim of ownership of property with evidence.
 	/// @param propertyType type of property
 	/// @param propertyId ID of property

@@ -44,7 +44,9 @@ describe('ClaimRegistry', async () => {
       expect(storedRef).to.be.eq(ref)
       expect(storedKey).to.be.eq(key)
 
-      await registry.removeRef()
+      await expect(registry.removeRef())
+        .to.emit(registry, 'ClaimRefRemoved')
+        .withArgs(connectedUser.address)
       const [__, [refRemoved, keyRemoved]] = await registry.listClaims(
         connectedUser.address
       )

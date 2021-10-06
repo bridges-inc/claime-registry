@@ -49,8 +49,12 @@ interface IClaimRegistry {
 	/// @dev Remove a claim of ownership.
 	/// @param propertyType type of property
 	/// @param propertyId ID of property
-	function remove(string memory propertyType, string memory propertyId)
-		external;
+	/// @param method method of ownership verification
+	function remove(
+		string memory propertyType,
+		string memory propertyId,
+		string memory method
+	) external;
 
 	/// @dev Remove a reference of claims of ownership of property.
 	function removeRef() external;

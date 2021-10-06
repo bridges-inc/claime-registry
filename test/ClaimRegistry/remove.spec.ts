@@ -44,7 +44,7 @@ describe('ClaimRegistry', async () => {
 
       const [claimKeys] = await registry.listClaims(connectedUser.address)
       expect(claimKeys).to.have.length(2)
-      await expect(registry.remove(propertyType, anotherId))
+      await expect(registry.remove(propertyType, anotherId, method))
         .to.emit(registry, 'ClaimRemoved')
         .withArgs(connectedUser.address, propertyType, anotherId)
       const [keyRemoved] = await registry.listClaims(connectedUser.address)

@@ -54,7 +54,7 @@ describe('ClaimRegistry', async () => {
       const res = await registry.allClaims(claimKeys[0])
       expect(res).to.deep.equal([propertyType, propertyId, evidence, method])
     })
-    it('should add a claim', async () => {
+    it('should add a claim if the same propery, method and another id', async () => {
       const { propertyType, propertyId, evidence, method } = domainClaim
       await registry.register(propertyType, propertyId, evidence, method)
       const anotherId = propertyId + '2'
@@ -67,6 +67,19 @@ describe('ClaimRegistry', async () => {
       )
       expect((await registry.allClaims(claimKeys[1]))[1]).to.deep.equal(
         anotherId
+      )
+    })
+    it('should add a claim if the same propery, id and another method', async () => {
+      const { propertyType, propertyId, evidence, method } = domainClaim
+      await registry.register(propertyType, propertyId, evidence, method)
+      const anotherMethod = method + '2'
+      await registry.register(propertyType, propertyId, evidence, anotherMethod)
+
+      const [claimKeys] = await registry.listClaims(connectedUser.address)
+      expect(claimKeys).to.have.length(2)
+      expect((await registry.allClaims(claimKeys[0]))[3]).to.deep.equal(method)
+      expect((await registry.allClaims(claimKeys[1]))[3]).to.deep.equal(
+        anotherMethod
       )
     })
     it('should update a claim if the same key', async () => {

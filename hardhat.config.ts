@@ -52,6 +52,11 @@ const config: HardhatUserConfig = {
     ganache: {
       url: 'http://0.0.0.0:7545',
     },
+    rinkeby: {
+      url: `https://rinkeby.infura.io/v3/${INFURA_ID}`,
+      accounts: [`0x${PRIVATE_KEY}`],
+      gasPrice,
+    },
   },
   gasReporter: {
     enabled: true,

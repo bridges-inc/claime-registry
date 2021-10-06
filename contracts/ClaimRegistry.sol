@@ -10,7 +10,7 @@ contract ClaimRegistry is IClaimRegistry {
 	/// @dev Maps address with the claimKeys.
 	mapping(address => uint256[]) public allClaimKeys;
 
-	/// @dev Maps claimKey<uint256: hash of address, propertyType, propertyId> with the claim.
+	/// @dev Maps claimKey<uint256: hash of address, propertyType, propertyId, method> with the claim.
 	mapping(uint256 => Claim) public allClaims;
 
 	/// @dev Maps address with the claim registry.
@@ -25,7 +25,12 @@ contract ClaimRegistry is IClaimRegistry {
 	) public override {
 		require(!_isEmptyStr(propertyType), "CLM001");
 		require(!_isEmptyStr(propertyId), "CLM002");
-		uint256 claimKey = _toClaimKey(msg.sender, propertyType, propertyId);
+		uint256 claimKey = _toClaimKey(
+			msg.sender,
+			propertyType,
+			propertyId,
+			method
+		);
 		bool isNew = _isEmptyStr(allClaims[claimKey].propertyType);
 		allClaims[claimKey].propertyType = propertyType;
 		allClaims[claimKey].propertyId = propertyId;
@@ -49,13 +54,19 @@ contract ClaimRegistry is IClaimRegistry {
 	}
 
 	/// @inheritdoc IClaimRegistry
-	function remove(string memory propertyType, string memory propertyId)
-		public
-		override
-	{
+	function remove(
+		string memory propertyType,
+		string memory propertyId,
+		string memory method
+	) public override {
 		require(!_isEmptyStr(propertyType), "CLM001");
 		require(!_isEmptyStr(propertyId), "CLM002");
-		uint256 claimKey = _toClaimKey(msg.sender, propertyType, propertyId);
+		uint256 claimKey = _toClaimKey(
+			msg.sender,
+			propertyType,
+			propertyId,
+			method
+		);
 		uint256 keysLength = allClaimKeys[msg.sender].length;
 		uint256 index = keysLength;
 		for (uint256 i = 0; i < keysLength; i++) {
@@ -111,9 +122,12 @@ contract ClaimRegistry is IClaimRegistry {
 	function _toClaimKey(
 		address account,
 		string memory propertyType,
-		string memory propertyId
+		string memory propertyId,
+		string memory method
 	) internal pure returns (uint256) {
 		return
-			uint256(keccak256(abi.encodePacked(account, propertyType, propertyId)));
+			uint256(
+				keccak256(abi.encodePacked(account, propertyType, propertyId, method))
+			);
 	}
 }

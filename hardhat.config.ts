@@ -11,7 +11,7 @@ require('dotenv').config()
 const NETWORK = process.env.NETWORK || ''
 const RPC_URL = process.env.RPC_URL || ''
 const PRIVATE_KEY = process.env.PRIVATE_KEY || ''
-const gasPrice = 20000000000 // 2 gwei
+const gasPrice = 50000000000 // 2 gwei
 const COINMARKETCAP = process.env.COINMARKETCAP || ''
 
 const networkSettings =

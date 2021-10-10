@@ -8,11 +8,22 @@ import './src/tasks/deploy_contracts'
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 require('dotenv').config()
 
-const INFURA_ID = process.env.INFURA_ID || ''
+const NETWORK = process.env.NETWORK || ''
+const RPC_URL = process.env.RPC_URL || ''
 const PRIVATE_KEY = process.env.PRIVATE_KEY || ''
-const POLYGON_RPC_URL = process.env.POLYGON_RPC
 const gasPrice = 20000000000 // 2 gwei
 const COINMARKETCAP = process.env.COINMARKETCAP || ''
+
+const networkSettings =
+  NETWORK && RPC_URL && PRIVATE_KEY
+    ? {
+        [NETWORK]: {
+          url: RPC_URL,
+          accounts: [`0x${PRIVATE_KEY}`],
+          gasPrice,
+        },
+      }
+    : {}
 
 const config: HardhatUserConfig = {
   defaultNetwork: 'hardhat',
@@ -52,11 +63,7 @@ const config: HardhatUserConfig = {
     ganache: {
       url: 'http://0.0.0.0:7545',
     },
-    rinkeby: {
-      url: `https://rinkeby.infura.io/v3/${INFURA_ID}`,
-      accounts: [`0x${PRIVATE_KEY}`],
-      gasPrice,
-    },
+    ...networkSettings,
   },
   gasReporter: {
     enabled: true,

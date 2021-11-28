@@ -13,9 +13,6 @@ contract ClaimRegistry is IClaimRegistry {
 	/// @dev Maps claimKey<uint256: hash of address, propertyType, propertyId, method> with the claim.
 	mapping(uint256 => Claim) public allClaims;
 
-	/// @dev Maps address with the claim registry.
-	mapping(address => ClaimRef) public allClaimRefs;
-
 	/// @inheritdoc IClaimRegistry
 	function register(
 		string memory propertyType,
@@ -40,17 +37,6 @@ contract ClaimRegistry is IClaimRegistry {
 			allClaimKeys[msg.sender].push(claimKey);
 		}
 		emit ClaimUpdated(msg.sender, allClaims[claimKey]);
-	}
-
-	/// @inheritdoc IClaimRegistry
-	function registerRef(string memory ref, string memory key) public override {
-		allClaimRefs[msg.sender].ref = ref;
-		allClaimRefs[msg.sender].key = key;
-		if (_isEmptyStr(ref) && _isEmptyStr(key)) {
-			emit ClaimRefRemoved(msg.sender);
-		} else {
-			emit ClaimRefUpdated(msg.sender, allClaimRefs[msg.sender]);
-		}
 	}
 
 	/// @inheritdoc IClaimRegistry
@@ -86,21 +72,13 @@ contract ClaimRegistry is IClaimRegistry {
 	}
 
 	/// @inheritdoc IClaimRegistry
-	function removeRef() public override {
-		registerRef("", "");
-	}
-
-	/// @inheritdoc IClaimRegistry
 	function listClaims(address account)
 		public
 		view
 		override
-		returns (uint256[] memory, string[2] memory)
+		returns (uint256[] memory)
 	{
-		return (
-			allClaimKeys[account],
-			[allClaimRefs[account].ref, allClaimRefs[account].key]
-		);
+		return allClaimKeys[account];
 	}
 
 	function _equalsStr(string memory a, string memory b)

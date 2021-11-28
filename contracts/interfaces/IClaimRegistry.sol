@@ -23,12 +23,6 @@ interface IClaimRegistry {
 	/// @dev Emit on a claim removed
 	event ClaimRemoved(address claimer, string propertyType, string propertyId);
 
-	/// @dev Emit on a claim ref created/updated
-	event ClaimRefUpdated(address claimer, ClaimRef ref);
-
-	/// @dev Emit on a claim ref removed
-	event ClaimRefRemoved(address claimer);
-
 	/// @dev Register a claim of ownership of property with evidence.
 	/// @param propertyType type of property
 	/// @param propertyId ID of property
@@ -41,11 +35,6 @@ interface IClaimRegistry {
 		string memory method
 	) external;
 
-	/// @dev Register a reference of claims of ownership of property.
-	/// @param ref type of reference
-	/// @param key key of a claim in the reference
-	function registerRef(string memory ref, string memory key) external;
-
 	/// @dev Remove a claim of ownership.
 	/// @param propertyType type of property
 	/// @param propertyId ID of property
@@ -56,14 +45,8 @@ interface IClaimRegistry {
 		string memory method
 	) external;
 
-	/// @dev Remove a reference of claims of ownership of property.
-	function removeRef() external;
-
 	/// @dev List keys of claim and a reference by an account
 	/// @param account account of claimer
-	/// @return [[claimKeys], [ref, key]]
-	function listClaims(address account)
-		external
-		view
-		returns (uint256[] memory, string[2] memory);
+	/// @return [[claimKeys]]
+	function listClaims(address account) external view returns (uint256[] memory);
 }

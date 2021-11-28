@@ -8,8 +8,8 @@ interface IClaimRegistry {
 	struct Claim {
 		string propertyType;
 		string propertyId;
-		string evidence;
 		string method;
+		string evidence;
 	}
 
 	/// @dev Reference to external
@@ -21,18 +21,18 @@ interface IClaimRegistry {
 	event ClaimUpdated(address claimer, Claim claim);
 
 	/// @dev Emit on a claim removed
-	event ClaimRemoved(address claimer, string propertyType, string propertyId);
+	event ClaimRemoved(address claimer, Claim claim);
 
 	/// @dev Register a claim of ownership of property with evidence.
 	/// @param propertyType type of property
 	/// @param propertyId ID of property
-	/// @param evidence evidence of ownership
 	/// @param method method of ownership verification
+	/// @param evidence evidence of ownership
 	function register(
 		string memory propertyType,
 		string memory propertyId,
-		string memory evidence,
-		string memory method
+		string memory method,
+		string memory evidence
 	) external;
 
 	/// @dev Remove a claim of ownership.

@@ -17,8 +17,8 @@ contract ClaimRegistry is IClaimRegistry {
 	function register(
 		string memory propertyType,
 		string memory propertyId,
-		string memory evidence,
-		string memory method
+		string memory method,
+		string memory evidence
 	) public override {
 		require(!_isEmptyStr(propertyType), "CLM001");
 		require(!_isEmptyStr(propertyId), "CLM002");
@@ -31,8 +31,8 @@ contract ClaimRegistry is IClaimRegistry {
 		bool isNew = _isEmptyStr(allClaims[claimKey].propertyType);
 		allClaims[claimKey].propertyType = propertyType;
 		allClaims[claimKey].propertyId = propertyId;
-		allClaims[claimKey].evidence = evidence;
 		allClaims[claimKey].method = method;
+		allClaims[claimKey].evidence = evidence;
 		if (isNew) {
 			allClaimKeys[msg.sender].push(claimKey);
 		}
@@ -62,12 +62,13 @@ contract ClaimRegistry is IClaimRegistry {
 			}
 		}
 		if (index < keysLength) {
+			Claim memory claim = allClaims[claimKey];
 			delete allClaims[claimKey];
 			allClaimKeys[msg.sender][index] = allClaimKeys[msg.sender][
 				keysLength - 1
 			];
 			allClaimKeys[msg.sender].pop();
-			emit ClaimRemoved(msg.sender, propertyType, propertyId);
+			emit ClaimRemoved(msg.sender, claim);
 		}
 	}
 

@@ -37,30 +37,30 @@ describe('ClaimRegistry', async () => {
     })
 
     it('should new a claim', async () => {
-      const { propertyType, propertyId, evidence, method } = domainClaim
+      const { propertyType, propertyId, method, evidence } = domainClaim
       await expect(
-        registry.register(propertyType, propertyId, evidence, method)
+        registry.register(propertyType, propertyId, method, evidence)
       )
         .to.emit(registry, 'ClaimUpdated')
         .withArgs(connectedUser.address, [
           propertyType,
           propertyId,
-          evidence,
           method,
+          evidence,
         ])
 
-      const [claimKeys] = await registry.listClaims(connectedUser.address)
+      const claimKeys = await registry.listClaims(connectedUser.address)
       expect(claimKeys).to.have.length(1)
       const res = await registry.allClaims(claimKeys[0])
-      expect(res).to.deep.equal([propertyType, propertyId, evidence, method])
+      expect(res).to.deep.equal([propertyType, propertyId, method, evidence])
     })
     it('should add a claim if the same propery, method and another id', async () => {
-      const { propertyType, propertyId, evidence, method } = domainClaim
-      await registry.register(propertyType, propertyId, evidence, method)
+      const { propertyType, propertyId, method, evidence } = domainClaim
+      await registry.register(propertyType, propertyId, method, evidence)
       const anotherId = propertyId + '2'
-      await registry.register(propertyType, anotherId, evidence, method)
+      await registry.register(propertyType, anotherId, method, evidence)
 
-      const [claimKeys] = await registry.listClaims(connectedUser.address)
+      const claimKeys = await registry.listClaims(connectedUser.address)
       expect(claimKeys).to.have.length(2)
       expect((await registry.allClaims(claimKeys[0]))[1]).to.deep.equal(
         propertyId
@@ -70,53 +70,53 @@ describe('ClaimRegistry', async () => {
       )
     })
     it('should add a claim if the same propery, id and another method', async () => {
-      const { propertyType, propertyId, evidence, method } = domainClaim
-      await registry.register(propertyType, propertyId, evidence, method)
+      const { propertyType, propertyId, method, evidence } = domainClaim
+      await registry.register(propertyType, propertyId, method, evidence)
       const anotherMethod = method + '2'
-      await registry.register(propertyType, propertyId, evidence, anotherMethod)
+      await registry.register(propertyType, propertyId, anotherMethod, evidence)
 
-      const [claimKeys] = await registry.listClaims(connectedUser.address)
+      const claimKeys = await registry.listClaims(connectedUser.address)
       expect(claimKeys).to.have.length(2)
-      expect((await registry.allClaims(claimKeys[0]))[3]).to.deep.equal(method)
-      expect((await registry.allClaims(claimKeys[1]))[3]).to.deep.equal(
+      expect((await registry.allClaims(claimKeys[0]))[2]).to.deep.equal(method)
+      expect((await registry.allClaims(claimKeys[1]))[2]).to.deep.equal(
         anotherMethod
       )
     })
     it('should update a claim if the same key', async () => {
-      const { propertyType, propertyId, evidence, method } = domainClaim
-      await registry.register(propertyType, propertyId, evidence, method)
+      const { propertyType, propertyId, method, evidence } = domainClaim
+      await registry.register(propertyType, propertyId, method, evidence)
       const anotherEvidence = evidence + '2'
-      await registry.register(propertyType, propertyId, anotherEvidence, method)
+      await registry.register(propertyType, propertyId, method, anotherEvidence)
 
-      const [claimKeys] = await registry.listClaims(connectedUser.address)
+      const claimKeys = await registry.listClaims(connectedUser.address)
       expect(claimKeys).to.have.length(1)
-      expect((await registry.allClaims(claimKeys[0]))[2]).to.deep.equal(
+      expect((await registry.allClaims(claimKeys[0]))[3]).to.deep.equal(
         anotherEvidence
       )
     })
     it('should new a claim to the same property by another account', async () => {
-      const { propertyType, propertyId, evidence, method } = domainClaim
-      await registry.register(propertyType, propertyId, evidence, method)
+      const { propertyType, propertyId, method, evidence } = domainClaim
+      await registry.register(propertyType, propertyId, method, evidence)
 
       const registry2 = registry.connect(user2)
-      await registry2.register(propertyType, propertyId, evidence, method)
+      await registry2.register(propertyType, propertyId, method, evidence)
 
-      const [claimKeys1] = await registry.listClaims(connectedUser.address)
+      const claimKeys1 = await registry.listClaims(connectedUser.address)
       expect(claimKeys1).to.have.length(1)
-      const [claimKeys2] = await registry.listClaims(user2.address)
+      const claimKeys2 = await registry.listClaims(user2.address)
       expect(claimKeys2).to.have.length(1)
       expect(claimKeys1[0]).to.not.eq(claimKeys2[0])
     })
     it('fail if property type is blank', async () => {
-      const { propertyId, evidence, method } = domainClaim
+      const { propertyId, method, evidence } = domainClaim
       await expect(
-        registry.register('', propertyId, evidence, method)
+        registry.register('', propertyId, method, evidence)
       ).to.be.revertedWith('CLM001')
     })
     it('fail if property id is blank', async () => {
-      const { propertyType, evidence, method } = domainClaim
+      const { propertyType, method, evidence } = domainClaim
       await expect(
-        registry.register(propertyType, '', evidence, method)
+        registry.register(propertyType, '', method, evidence)
       ).to.be.revertedWith('CLM002')
     })
   })

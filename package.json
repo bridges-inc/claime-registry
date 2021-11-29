@@ -2,6 +2,7 @@
   "scripts": {
     "deploy": "npx hardhat deploy --network hardhat",
     "deploy:rinkeby": "npx hardhat deploy --network rinkeby",
+    "deploy:mumbai": "npx hardhat deploy --network mumbai",
     "deploy:polygon": "npx hardhat deploy --network polygon",
     "deploy:mainnet": "npx hardhat deploy --network mainnet",
     "test": "npx hardhat test",

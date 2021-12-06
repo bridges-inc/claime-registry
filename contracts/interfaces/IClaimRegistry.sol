@@ -45,7 +45,7 @@ interface IClaimRegistry {
 		string memory method
 	) external;
 
-	/// @dev List keys of claim and a reference by an account
+	/// @dev List keys of claims
 	/// @param account account of claimer
 	/// @return [[claimKeys]]
 	function listClaims(address account) external view returns (uint256[] memory);

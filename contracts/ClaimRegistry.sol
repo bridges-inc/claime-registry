@@ -5,7 +5,6 @@ import "./interfaces/IClaimRegistry.sol";
 import "hardhat/console.sol";
 
 /// @title Claimer - manages the posted items and donation flows.
-/// @author Shoya Yanagisawa - <shoya.yanagisawa@bridges.inc>
 contract ClaimRegistry is IClaimRegistry {
 	/// @dev Maps address with the claimKeys.
 	mapping(address => uint256[]) public allClaimKeys;

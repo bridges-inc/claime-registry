@@ -18,7 +18,7 @@ contract ClaimRegistry is IClaimRegistry {
 		string memory propertyId,
 		string memory method,
 		string memory evidence
-	) public override {
+	) external override {
 		require(!_isEmptyStr(propertyType), "CLM001");
 		require(!_isEmptyStr(propertyId), "CLM002");
 		uint256 claimKey = _toClaimKey(
@@ -43,7 +43,7 @@ contract ClaimRegistry is IClaimRegistry {
 		string memory propertyType,
 		string memory propertyId,
 		string memory method
-	) public override {
+	) external override {
 		require(!_isEmptyStr(propertyType), "CLM001");
 		require(!_isEmptyStr(propertyId), "CLM002");
 		uint256 claimKey = _toClaimKey(
@@ -73,7 +73,7 @@ contract ClaimRegistry is IClaimRegistry {
 
 	/// @inheritdoc IClaimRegistry
 	function listClaims(address account)
-		public
+		external
 		view
 		override
 		returns (uint256[] memory)

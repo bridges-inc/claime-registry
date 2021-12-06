@@ -11,11 +11,6 @@ interface IClaimRegistry {
 		string evidence;
 	}
 
-	/// @dev Reference to external
-	struct ClaimRef {
-		string ref;
-		string key;
-	}
 	/// @dev Emit on a claim created/updated
 	event ClaimUpdated(address claimer, Claim claim);
 

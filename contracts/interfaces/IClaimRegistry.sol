@@ -1,8 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.6;
 
-/// @title IClaimRegistry - register ownership claims.
-/// @author Shoya Yanagisawa - <shoya.yanagisawa@bridges.inc>
+/// @title IClaimeRegistry store claims of ownership.
 interface IClaimRegistry {
 	/// @dev Claim of Ownership
 	struct Claim {

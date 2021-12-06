@@ -3,7 +3,7 @@ pragma solidity 0.8.6;
 
 import "./interfaces/IClaimRegistry.sol";
 
-/// @title Claimer - manages the posted items and donation flows.
+/// @title ClaimeRegistry store claims of ownership
 contract ClaimRegistry is IClaimRegistry {
 	/// @dev Maps address with the claimKeys.
 	mapping(address => uint256[]) public allClaimKeys;

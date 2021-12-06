@@ -1,50 +1,33 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.8.6;
+pragma solidity 0.8.10;
 
-/// @title IClaimRegistry - register ownership claims.
-/// @author Shoya Yanagisawa - <shoya.yanagisawa@bridges.inc>
+/// @title IClaimeRegistry store claims of ownership.
 interface IClaimRegistry {
 	/// @dev Claim of Ownership
 	struct Claim {
 		string propertyType;
 		string propertyId;
-		string evidence;
 		string method;
+		string evidence;
 	}
 
-	/// @dev Reference to external
-	struct ClaimRef {
-		string ref;
-		string key;
-	}
 	/// @dev Emit on a claim created/updated
 	event ClaimUpdated(address claimer, Claim claim);
 
 	/// @dev Emit on a claim removed
-	event ClaimRemoved(address claimer, string propertyType, string propertyId);
-
-	/// @dev Emit on a claim ref created/updated
-	event ClaimRefUpdated(address claimer, ClaimRef ref);
-
-	/// @dev Emit on a claim ref removed
-	event ClaimRefRemoved(address claimer);
+	event ClaimRemoved(address claimer, Claim claim);
 
 	/// @dev Register a claim of ownership of property with evidence.
 	/// @param propertyType type of property
 	/// @param propertyId ID of property
-	/// @param evidence evidence of ownership
 	/// @param method method of ownership verification
+	/// @param evidence evidence of ownership
 	function register(
 		string memory propertyType,
 		string memory propertyId,
-		string memory evidence,
-		string memory method
+		string memory method,
+		string memory evidence
 	) external;
-
-	/// @dev Register a reference of claims of ownership of property.
-	/// @param ref type of reference
-	/// @param key key of a claim in the reference
-	function registerRef(string memory ref, string memory key) external;
 
 	/// @dev Remove a claim of ownership.
 	/// @param propertyType type of property
@@ -56,14 +39,8 @@ interface IClaimRegistry {
 		string memory method
 	) external;
 
-	/// @dev Remove a reference of claims of ownership of property.
-	function removeRef() external;
-
-	/// @dev List keys of claim and a reference by an account
+	/// @dev List keys of claims
 	/// @param account account of claimer
-	/// @return [[claimKeys], [ref, key]]
-	function listClaims(address account)
-		external
-		view
-		returns (uint256[] memory, string[2] memory);
+	/// @return [[claimKeys]]
+	function listClaims(address account) external view returns (uint256[] memory);
 }

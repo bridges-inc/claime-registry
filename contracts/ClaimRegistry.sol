@@ -1,11 +1,9 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.8.6;
+pragma solidity 0.8.10;
 
 import "./interfaces/IClaimRegistry.sol";
-import "hardhat/console.sol";
 
-/// @title Claimer - manages the posted items and donation flows.
-/// @author Shoya Yanagisawa - <shoya.yanagisawa@bridges.inc>
+/// @title ClaimeRegistry store claims of ownership
 contract ClaimRegistry is IClaimRegistry {
 	/// @dev Maps address with the claimKeys.
 	mapping(address => uint256[]) public allClaimKeys;
@@ -13,16 +11,13 @@ contract ClaimRegistry is IClaimRegistry {
 	/// @dev Maps claimKey<uint256: hash of address, propertyType, propertyId, method> with the claim.
 	mapping(uint256 => Claim) public allClaims;
 
-	/// @dev Maps address with the claim registry.
-	mapping(address => ClaimRef) public allClaimRefs;
-
 	/// @inheritdoc IClaimRegistry
 	function register(
 		string memory propertyType,
 		string memory propertyId,
-		string memory evidence,
-		string memory method
-	) public override {
+		string memory method,
+		string memory evidence
+	) external override {
 		require(!_isEmptyStr(propertyType), "CLM001");
 		require(!_isEmptyStr(propertyId), "CLM002");
 		uint256 claimKey = _toClaimKey(
@@ -34,8 +29,8 @@ contract ClaimRegistry is IClaimRegistry {
 		bool isNew = _isEmptyStr(allClaims[claimKey].propertyType);
 		allClaims[claimKey].propertyType = propertyType;
 		allClaims[claimKey].propertyId = propertyId;
-		allClaims[claimKey].evidence = evidence;
 		allClaims[claimKey].method = method;
+		allClaims[claimKey].evidence = evidence;
 		if (isNew) {
 			allClaimKeys[msg.sender].push(claimKey);
 		}
@@ -43,22 +38,11 @@ contract ClaimRegistry is IClaimRegistry {
 	}
 
 	/// @inheritdoc IClaimRegistry
-	function registerRef(string memory ref, string memory key) public override {
-		allClaimRefs[msg.sender].ref = ref;
-		allClaimRefs[msg.sender].key = key;
-		if (_isEmptyStr(ref) && _isEmptyStr(key)) {
-			emit ClaimRefRemoved(msg.sender);
-		} else {
-			emit ClaimRefUpdated(msg.sender, allClaimRefs[msg.sender]);
-		}
-	}
-
-	/// @inheritdoc IClaimRegistry
 	function remove(
 		string memory propertyType,
 		string memory propertyId,
 		string memory method
-	) public override {
+	) external override {
 		require(!_isEmptyStr(propertyType), "CLM001");
 		require(!_isEmptyStr(propertyId), "CLM002");
 		uint256 claimKey = _toClaimKey(
@@ -76,31 +60,24 @@ contract ClaimRegistry is IClaimRegistry {
 			}
 		}
 		if (index < keysLength) {
+			Claim memory claim = allClaims[claimKey];
 			delete allClaims[claimKey];
 			allClaimKeys[msg.sender][index] = allClaimKeys[msg.sender][
 				keysLength - 1
 			];
 			allClaimKeys[msg.sender].pop();
-			emit ClaimRemoved(msg.sender, propertyType, propertyId);
+			emit ClaimRemoved(msg.sender, claim);
 		}
 	}
 
 	/// @inheritdoc IClaimRegistry
-	function removeRef() public override {
-		registerRef("", "");
-	}
-
-	/// @inheritdoc IClaimRegistry
 	function listClaims(address account)
-		public
+		external
 		view
 		override
-		returns (uint256[] memory, string[2] memory)
+		returns (uint256[] memory)
 	{
-		return (
-			allClaimKeys[account],
-			[allClaimRefs[account].ref, allClaimRefs[account].key]
-		);
+		return allClaimKeys[account];
 	}
 
 	function _equalsStr(string memory a, string memory b)

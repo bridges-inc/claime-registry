@@ -1,9 +1,10 @@
 {
   "scripts": {
     "deploy": "npx hardhat deploy --network hardhat",
-    "deploy:rinkeby": "npx hardhat deploy --network rinkeby",
-    "deploy:polygon": "npx hardhat deploy --network polygon",
-    "deploy:mainnet": "npx hardhat deploy --network mainnet",
+    "deploy:rinkeby": "cross-env NETWORK=rinkeby npx hardhat deploy --network rinkeby",
+    "deploy:mumbai": "cross-env NETWORK=mumbai npx hardhat deploy --network mumbai",
+    "deploy:polygon": "cross-env NETWORK=polygon npx hardhat deploy --network polygon",
+    "deploy:mainnet": "cross-env NETWORK=mainnet npx hardhat deploy --network mainnet",
     "test": "npx hardhat test",
     "prettier": "prettier --write 'contracts/**/*.sol'"
   },
@@ -14,6 +15,7 @@
     "@types/mocha": "^9.0.0",
     "@types/node": "^16.7.10",
     "chai": "^4.3.4",
+    "cross-env": "^7.0.3",
     "dotenv": "^10.0.0",
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.3.0",

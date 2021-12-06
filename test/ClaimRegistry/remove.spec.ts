@@ -38,16 +38,21 @@ describe('ClaimRegistry', async () => {
 
     it('should remove a claim', async () => {
       const { propertyType, propertyId, evidence, method } = domainClaim
-      await registry.register(propertyType, propertyId, evidence, method)
+      await registry.register(propertyType, propertyId, method, evidence)
       const anotherId = propertyId + '2'
-      await registry.register(propertyType, anotherId, evidence, method)
+      await registry.register(propertyType, anotherId, method, evidence)
 
-      const [claimKeys] = await registry.listClaims(connectedUser.address)
+      const claimKeys = await registry.listClaims(connectedUser.address)
       expect(claimKeys).to.have.length(2)
       await expect(registry.remove(propertyType, anotherId, method))
         .to.emit(registry, 'ClaimRemoved')
-        .withArgs(connectedUser.address, propertyType, anotherId)
-      const [keyRemoved] = await registry.listClaims(connectedUser.address)
+        .withArgs(connectedUser.address, [
+          propertyType,
+          anotherId,
+          method,
+          evidence,
+        ])
+      const keyRemoved = await registry.listClaims(connectedUser.address)
       expect(keyRemoved).to.have.length(1)
       expect((await registry.allClaims(keyRemoved[0]))[1]).to.be.eq(propertyId)
     })

@@ -1,14 +1,17 @@
 import '@nomiclabs/hardhat-waffle'
+import dotenv from 'dotenv'
+import fs from 'fs'
 import 'hardhat-abi-exporter'
 import 'hardhat-deploy'
 import 'hardhat-deploy-ethers'
 import 'hardhat-gas-reporter'
 import { HardhatUserConfig } from 'hardhat/types/config'
 import './src/tasks/deploy_contracts'
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-require('dotenv').config()
 
 const NETWORK = process.env.NETWORK || ''
+const envFilePath = `.env.${NETWORK}`
+dotenv.config(fs.existsSync(envFilePath) ? { path: `.env.${NETWORK}` } : {})
+
 const RPC_URL = process.env.RPC_URL || ''
 const PRIVATE_KEY = process.env.PRIVATE_KEY || ''
 const gasPrice = 50000000000 // 2 gwei
@@ -36,7 +39,7 @@ const config: HardhatUserConfig = {
   solidity: {
     compilers: [
       {
-        version: '0.8.6',
+        version: '0.8.10',
         settings: {
           optimizer: {
             enabled: true,

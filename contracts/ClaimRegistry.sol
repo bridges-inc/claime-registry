@@ -2,7 +2,6 @@
 pragma solidity 0.8.6;
 
 import "./interfaces/IClaimRegistry.sol";
-import "hardhat/console.sol";
 
 /// @title Claimer - manages the posted items and donation flows.
 contract ClaimRegistry is IClaimRegistry {

@@ -1,0 +1,38 @@
+{
+  "language": "Solidity",
+  "sources": {
+    "contracts/ClaimRegistry.sol": {
+      "content": "// SPDX-License-Identifier: UNLICENSED\npragma solidity 0.8.10;\n\nimport \"./interfaces/IClaimRegistry.sol\";\n\n/// @title ClaimeRegistry store claims of ownership\ncontract ClaimRegistry is IClaimRegistry {\n\t/// @dev Maps address with the claimKeys.\n\tmapping(address => uint256[]) public allClaimKeys;\n\n\t/// @dev Maps claimKey<uint256: hash of address, propertyType, propertyId, method> with the claim.\n\tmapping(uint256 => Claim) public allClaims;\n\n\t/// @inheritdoc IClaimRegistry\n\tfunction register(\n\t\tstring memory propertyType,\n\t\tstring memory propertyId,\n\t\tstring memory method,\n\t\tstring memory evidence\n\t) external override {\n\t\trequire(!_isEmptyStr(propertyType), \"CLM001\");\n\t\trequire(!_isEmptyStr(propertyId), \"CLM002\");\n\t\tuint256 claimKey = _toClaimKey(\n\t\t\tmsg.sender,\n\t\t\tpropertyType,\n\t\t\tpropertyId,\n\t\t\tmethod\n\t\t);\n\t\tbool isNew = _isEmptyStr(allClaims[claimKey].propertyType);\n\t\tallClaims[claimKey].propertyType = propertyType;\n\t\tallClaims[claimKey].propertyId = propertyId;\n\t\tallClaims[claimKey].method = method;\n\t\tallClaims[claimKey].evidence = evidence;\n\t\tif (isNew) {\n\t\t\tallClaimKeys[msg.sender].push(claimKey);\n\t\t}\n\t\temit ClaimUpdated(msg.sender, allClaims[claimKey]);\n\t}\n\n\t/// @inheritdoc IClaimRegistry\n\tfunction remove(\n\t\tstring memory propertyType,\n\t\tstring memory propertyId,\n\t\tstring memory method\n\t) external override {\n\t\trequire(!_isEmptyStr(propertyType), \"CLM001\");\n\t\trequire(!_isEmptyStr(propertyId), \"CLM002\");\n\t\tuint256 claimKey = _toClaimKey(\n\t\t\tmsg.sender,\n\t\t\tpropertyType,\n\t\t\tpropertyId,\n\t\t\tmethod\n\t\t);\n\t\tuint256 keysLength = allClaimKeys[msg.sender].length;\n\t\tuint256 index = keysLength;\n\t\tfor (uint256 i = 0; i < keysLength; i++) {\n\t\t\tif (allClaimKeys[msg.sender][i] == claimKey) {\n\t\t\t\tindex = i;\n\t\t\t\tbreak;\n\t\t\t}\n\t\t}\n\t\tif (index < keysLength) {\n\t\t\tClaim memory claim = allClaims[claimKey];\n\t\t\tdelete allClaims[claimKey];\n\t\t\tallClaimKeys[msg.sender][index] = allClaimKeys[msg.sender][\n\t\t\t\tkeysLength - 1\n\t\t\t];\n\t\t\tallClaimKeys[msg.sender].pop();\n\t\t\temit ClaimRemoved(msg.sender, claim);\n\t\t}\n\t}\n\n\t/// @inheritdoc IClaimRegistry\n\tfunction listClaims(address account)\n\t\texternal\n\t\tview\n\t\toverride\n\t\treturns (uint256[] memory)\n\t{\n\t\treturn allClaimKeys[account];\n\t}\n\n\tfunction _equalsStr(string memory a, string memory b)\n\t\tinternal\n\t\tpure\n\t\treturns (bool)\n\t{\n\t\tif (bytes(a).length != bytes(b).length) {\n\t\t\treturn false;\n\t\t} else {\n\t\t\treturn keccak256(abi.encodePacked(a)) == keccak256(abi.encodePacked(b));\n\t\t}\n\t}\n\n\tfunction _isEmptyStr(string memory a) internal pure returns (bool) {\n\t\treturn _equalsStr(a, \"\");\n\t}\n\n\tfunction _toClaimKey(\n\t\taddress account,\n\t\tstring memory propertyType,\n\t\tstring memory propertyId,\n\t\tstring memory method\n\t) internal pure returns (uint256) {\n\t\treturn\n\t\t\tuint256(\n\t\t\t\tkeccak256(abi.encodePacked(account, propertyType, propertyId, method))\n\t\t\t);\n\t}\n}\n"
+    },
+    "contracts/interfaces/IClaimRegistry.sol": {
+      "content": "// SPDX-License-Identifier: UNLICENSED\npragma solidity 0.8.10;\n\n/// @title IClaimeRegistry store claims of ownership.\ninterface IClaimRegistry {\n\t/// @dev Claim of Ownership\n\tstruct Claim {\n\t\tstring propertyType;\n\t\tstring propertyId;\n\t\tstring method;\n\t\tstring evidence;\n\t}\n\n\t/// @dev Emit on a claim created/updated\n\tevent ClaimUpdated(address claimer, Claim claim);\n\n\t/// @dev Emit on a claim removed\n\tevent ClaimRemoved(address claimer, Claim claim);\n\n\t/// @dev Register a claim of ownership of property with evidence.\n\t/// @param propertyType type of property\n\t/// @param propertyId ID of property\n\t/// @param method method of ownership verification\n\t/// @param evidence evidence of ownership\n\tfunction register(\n\t\tstring memory propertyType,\n\t\tstring memory propertyId,\n\t\tstring memory method,\n\t\tstring memory evidence\n\t) external;\n\n\t/// @dev Remove a claim of ownership.\n\t/// @param propertyType type of property\n\t/// @param propertyId ID of property\n\t/// @param method method of ownership verification\n\tfunction remove(\n\t\tstring memory propertyType,\n\t\tstring memory propertyId,\n\t\tstring memory method\n\t) external;\n\n\t/// @dev List keys of claims\n\t/// @param account account of claimer\n\t/// @return [[claimKeys]]\n\tfunction listClaims(address account) external view returns (uint256[] memory);\n}\n"
+    }
+  },
+  "settings": {
+    "optimizer": {
+      "enabled": true,
+      "runs": 1000
+    },
+    "outputSelection": {
+      "*": {
+        "*": [
+          "abi",
+          "evm.bytecode",
+          "evm.deployedBytecode",
+          "evm.methodIdentifiers",
+          "metadata",
+          "devdoc",
+          "userdoc",
+          "storageLayout",
+          "evm.gasEstimates"
+        ],
+        "": [
+          "ast"
+        ]
+      }
+    },
+    "metadata": {
+      "useLiteralContent": true
+    }
+  }
+}
